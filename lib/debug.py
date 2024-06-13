@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # lib/debug.py
 
-from config.connection import CONN, CURSOR
+from lib.config.connection import conn, cursor
 import ipdb
 
 

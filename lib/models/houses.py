@@ -1,5 +1,6 @@
 from config.connection import conn, cursor
 
+
 class Houses:
     all={}
     def __init__(self, house_name, address, capacity, id=None):
@@ -71,21 +72,22 @@ class Houses:
         conn.commit()
         del type(self).all[self.id]
     @classmethod
-    def instance_from_db(cls,row):
-        id,house_name,address,capacity=row
-        house=cls.all.get(id)
-        if house:
-            house.house_name=house_name
-            house.address=address
-            house.capacity=capacity
-        else:
-            house=cls(id,house_name,address,capacity)
-            cls.all[id]=house
-        return house
+    def instance_from_db(cls, row):
+     id, house_name, address, capacity = row
+     house = cls.all.get(id)
+     if house:
+        house.house_name = house_name
+        house.address = address
+        house.capacity = capacity
+     else:
+        house = cls(house_name, address, capacity, id)
+        cls.all[id] = house
+     return house
+
     @classmethod
     def get_all(cls):
         sql="""
-           SELECT *
+           SELECT id,house_name,address,capacity
            FROM houses
         """
         rows=cursor.execute(sql).fetchall()
@@ -94,7 +96,7 @@ class Houses:
     @classmethod
     def find_by_name(cls,house_name):
         sql="""
-            SELECT *
+            SELECT id,house_name,address,capacity
             FROM houses
             WHERE house_name is ?
         """
