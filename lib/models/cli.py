@@ -1,9 +1,9 @@
 # lib/cli.py
 
 from helpers import exit_program
-from models.houses import Houses
-from models.tenants import Tenants
-from models.payments import Payments
+from houses import Houses
+from tenants import Tenants
+from payments import Payments
 
 def main():
     while True:
@@ -23,6 +23,10 @@ def main():
             list_payments()
         elif choice == "6":
             evict_tenant()
+        elif choice == "7":
+            add_tenant()
+        elif choice == "8":
+            list_tenants()
         else:
             print("Invalid choice")
 
@@ -35,6 +39,8 @@ def menu():
     print("4. Make a payment")
     print("5. List all payments")
     print("6. Evict a tenant")
+    print("7. Add a new tenant")
+    print("8. List all tenants")
 
 def add_house():
     house_name = input("Enter house name: ")
@@ -53,7 +59,7 @@ def delete_house():
     house_id = input("Enter house ID to delete: ")
     try:
         house_id = int(house_id)
-        house = Houses.all.get(house_id)
+        house = Houses.find_by_id(house_id)
         if house:
             house.delete()
             print(f"House with ID {house_id} deleted successfully.")
@@ -85,7 +91,7 @@ def make_payment():
         amount = int(amount)
         house_id = int(house_id)
         payment = Payments.create(tenant_number, payment_code, amount, house_id, house_name, payment_date, payment_method)
-        print(f"Payment with ID {payment.id} made successfully.")
+        print(f"Payment made successfully.")
     except ValueError:
         print("Amount and house ID must be numbers.")
     except Exception as e:
@@ -103,7 +109,7 @@ def evict_tenant():
     tenant_id = input("Enter tenant ID to evict: ")
     try:
         tenant_id = int(tenant_id)
-        tenant = Tenants.all.get(tenant_id)
+        tenant = Tenants.find_by_id(tenant_id)
         if tenant:
             tenant.delete()
             print(f"Tenant with ID {tenant_id} evicted successfully.")
@@ -113,6 +119,32 @@ def evict_tenant():
         print("Tenant ID must be a number.")
     except Exception as e:
         print(f"Error: {e}")
+
+def add_tenant():
+    name= input("Enter tenant name:")
+    tenant_number = input("Enter tenant number: ")
+    phone_number = input("Enter tenant phone number: ")
+    house_id = input("Enter house ID: ")
+    try:
+        house_id = int(house_id)
+        house = Houses.find_by_id(house_id)
+        if not house:
+
+            print(f"No house found with ID {house_id}.")
+        tenant = Tenants.create(name,tenant_number,house_id, phone_number)
+        print(f"Tenant {tenant.name} added successfully with ID {tenant.id}.")
+    except ValueError:
+        print("House ID must be a number.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+def list_tenants():
+    tenants = Tenants.get_all()
+    if tenants:
+        for tenant in tenants:
+            print(f"ID: {tenant.id}, Name: {tenant.name}, Tenant Number: {tenant.tenant_number}, Phone Number: {tenant.phone_number}, House ID: {tenant.house_id}")
+    else:
+        print("No tenants found.")
 
 if __name__ == "__main__":
     main()

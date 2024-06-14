@@ -94,6 +94,16 @@ class Houses:
         cls.all={}
         return [cls.instance_from_db(row) for row in rows]
     @classmethod
+    def find_by_id(cls, id):
+        sql = """
+            SELECT id, house_name, address, capacity
+            FROM houses
+            WHERE id = ?
+        """
+        row = cursor.execute(sql, (id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
+    @classmethod
     def find_by_name(cls,house_name):
         sql="""
             SELECT id,house_name,address,capacity
@@ -102,4 +112,5 @@ class Houses:
         """
         row=cursor.execute(sql,(house_name,)).fetchone()
         return cls.instance_from_db(row) if row else None
+    
 
